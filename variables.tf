@@ -24,7 +24,7 @@ variable "fwdestcount" {
 }
 
 variable "vmtype" {
-  default = "e2-medium"
+  default = "e2-small"
 }
 
 variable "vmimage" {
