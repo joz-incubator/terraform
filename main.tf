@@ -12,7 +12,7 @@ resource "google_compute_network" "vpc_network" {
 
 resource "google_compute_subnetwork" "subnet" {
   name          = "subnet-terraform"
-  ip_cidr_range = var.cidr
+  ip_cidr_range = "192.168.1.0/24"
   region  = "europe-west6"
   network       = google_compute_network.vpc_network.id
 }
@@ -66,14 +66,14 @@ resource "google_compute_firewall" "ingress_deny" {
 
 resource "google_compute_instance" "vm_instance" {
   name         = "vm-terraform"
-  zone         = var.zone
+  zone         = "europe-west6-c"
   depends_on   = [google_compute_subnetwork.subnet]
-  machine_type = var.vmtype
+  machine_type = "e2-small"
   enable_display = true
 
   boot_disk {
     initialize_params {
-      image = var.vmimage
+      image = "projects/ubuntu-os-cloud/global/images/ubuntu-2504-plucky-amd64-v20250701"
       size  = 10
       type  = "pd-balanced"
       }
@@ -100,15 +100,15 @@ resource "google_compute_instance" "vm_instance" {
 }
 
 resource "google_compute_router" "router" {
-  name    = "router-${var.customer}"
+  name    = "router-terraform"
   network = google_compute_network.vpc_network.name
-  region  = var.region
+  region  = "europe-west6"
 }
 
 resource "google_compute_router_nat" "nat" {
-  name                               = "natgw-${var.customer}"
+  name                               = "natgw-terraform"
   router                             = google_compute_router.router.name
-  region                             = var.region
+  region                             = "europe-west6"
   nat_ip_allocate_option             = "AUTO_ONLY"
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
