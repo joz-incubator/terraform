@@ -8,11 +8,11 @@ variable "zone" {
 }
 
 variable "customer" {
-  default = "whatever3"
+  default = "terraform"
 }
 
 variable "cidr" {
-  default = "10.0.0.0/24"
+  default = "192.168.1.0/24"
 }
 
 variable "fwdestnets" {
