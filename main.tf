@@ -2,25 +2,25 @@
 
 provider "google" {
   project = "he-prod-itinfra-incubator"
-  region  = var.region
+  region  = "europe-west6"
 }
 
 resource "google_compute_network" "vpc_network" {
-  name = "network-${var.customer}"
+  name = "network-terraform"
   auto_create_subnetworks = false
 }
 
 resource "google_compute_subnetwork" "subnet" {
-  name          = "subnet-${var.customer}"
+  name          = "subnet-terraform"
   ip_cidr_range = var.cidr
-  region  = var.region
+  region  = "europe-west6"
   network       = google_compute_network.vpc_network.id
 }
 
 resource "google_compute_firewall" "egress_internet" {
-  name    = "egressx-${var.customer}"
+  name    = "egress-terraform"
   network = google_compute_network.vpc_network.name
-  priority = 700
+  priority = 900
   direction = "EGRESS"
   allow {
     protocol = "tcp"
@@ -29,21 +29,9 @@ resource "google_compute_firewall" "egress_internet" {
   destination_ranges = ["0.0.0.0/0"]
 }
 
-resource "google_compute_firewall" "egress_https" {
-  name    = "egress-${var.customer}"
-  network = google_compute_network.vpc_network.name
-  priority = 900
-  direction = "EGRESS"
-  allow {
-    protocol = "tcp"
-    ports    = ["443"]
-  }
-
-  destination_ranges = slice(var.fwdestnets, 0, var.fwdestcount)
-}
 
 resource "google_compute_firewall" "egress_deny" {
-  name    = "denyout-${var.customer}"
+  name    = "denyout-terraform"
   network = google_compute_network.vpc_network.name
   priority = 1000
   direction = "EGRESS"
@@ -54,7 +42,7 @@ resource "google_compute_firewall" "egress_deny" {
 }
 
 resource "google_compute_firewall" "ingress_ssh" {
-  name    = "ingress-${var.customer}"
+  name    = "ingress-terraform"
   network = google_compute_network.vpc_network.name
   priority = 901
   direction = "INGRESS"
@@ -66,7 +54,7 @@ resource "google_compute_firewall" "ingress_ssh" {
 }
 
 resource "google_compute_firewall" "ingress_deny" {
-  name    = "denyin-${var.customer}"
+  name    = "denyin-terraform"
   network = google_compute_network.vpc_network.name
   priority = 1001
   direction = "INGRESS"
@@ -77,7 +65,7 @@ resource "google_compute_firewall" "ingress_deny" {
 }
 
 resource "google_compute_instance" "vm_instance" {
-  name         = "vm-${var.customer}"
+  name         = "vm-terraform"
   zone         = var.zone
   depends_on   = [google_compute_subnetwork.subnet]
   machine_type = var.vmtype
