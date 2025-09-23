@@ -1,2 +1,2 @@
-project_id = "your-gcp-project-id"
+project_id = "he-prod-itinfra-incubator"
 region     = "europe-west6"
